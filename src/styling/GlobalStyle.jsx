@@ -4,7 +4,6 @@ const GlobalStyle = createGlobalStyle`
   /* Import font */
   @import url("https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap");
 
-  /* CSS variables (colors used in the app) */
   :root {
     --color-black: #0b0b0b;
     --color-white: #ffffff;
