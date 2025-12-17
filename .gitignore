@@ -25,5 +25,6 @@ package-lock.json
 *.sw?
 
 # Environmental variables
+.env
 .env.*
 
