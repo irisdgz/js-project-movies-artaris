@@ -25,4 +25,4 @@ package-lock.json
 *.sw?
 
 # Environmental variables
-*.env
+components/.env
