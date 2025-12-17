@@ -150,25 +150,21 @@ const ErrorMessage = styled.p`
 `;
 
 const MovieDetail = () => {
-  const { id } = useParams(); 
-  console.log("MOVIE ID FROM URL:", id);
-
+  const { id } = useParams();
   const [movie, setMovie] = useState(null);
   const [loading, setLoading] = useState(true);
   const [hasError, setHasError] = useState(false);
-
-  const apiKey = import.meta.env.VITE_TMDB_API_KEY;
-
-  console.log("API KEY:", apiKey);
+  const apiKey = "d4bf612b9cd232a305095645997f202b";
 
   useEffect(() => {
     setLoading(true);
     setHasError(false);
 
-    fetch(`https://api.themoviedb.org/3/movie/${id}?api_key=${apiKey}&language=en-US`)
+    fetch(
+      `https://api.themoviedb.org/3/movie/${id}?api_key=${apiKey}&language=en-US`
+    )
       .then((response) => response.json())
       .then((data) => {
-        
         if (!data || data.success === false) {
           setHasError(true);
           setMovie(null);
@@ -188,7 +184,7 @@ const MovieDetail = () => {
     return <Message>Loading movie details...</Message>;
   }
 
-  // Error / Not found state 
+  // Error / Not found state
   if (hasError || !movie) {
     return (
       <main aria-label="Movie Details">

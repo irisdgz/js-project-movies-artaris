@@ -9,10 +9,12 @@ const Wrapper = styled.main`
   justify-content: center;
   text-align: center;
   padding: 20px;
+  color: white;
 `;
 
 const Title = styled.h1`
   margin-bottom: 10px;
+  color: var(--color-white);
 `;
 
 const Text = styled.p`
