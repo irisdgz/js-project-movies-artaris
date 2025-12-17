@@ -152,7 +152,7 @@ const ErrorMessage = styled.p`
 const MovieDetail = () => {
   const { id } = useParams(); 
   console.log("MOVIE ID FROM URL:", id);
-  
+
   const [movie, setMovie] = useState(null);
   const [loading, setLoading] = useState(true);
   const [hasError, setHasError] = useState(false);
@@ -192,9 +192,9 @@ const MovieDetail = () => {
   if (hasError || !movie) {
     return (
       <main aria-label="Movie Details">
-        <ErrorMessage>Sorry, we couldn’t find that movie.</ErrorMessage>
+        <ErrorMessage>Sorry, we couldn’t find the movie.</ErrorMessage>
         <Message>
-          <Link to="/">⬅ Go back to Movies</Link>
+          <Link to="/"> Go back to Movies</Link>
         </Message>
       </main>
     );
