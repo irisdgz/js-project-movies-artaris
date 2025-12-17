@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Link, useNavigate, useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import styled from "styled-components";
 
 const BackLink = styled(Link)`
@@ -96,6 +96,7 @@ const InfoWrapper = styled.div`
     margin-top: 650px;
   }
 `;
+
 const HeadText = styled.div`
   display: flex;
   align-items: center;
@@ -106,6 +107,7 @@ const HeadText = styled.div`
     margin-right: 25px;
   }
 `;
+
 const Rating = styled.div`
   display: inline-flex;
   background-color: var(--color-white);
@@ -133,6 +135,13 @@ const Description = styled.p`
   }
 `;
 
+const Message = styled.p`
+  color: var(--color-white);
+  font-size: 20px;
+  text-align: center;
+  padding: 40px 20px;
+`;
+
 const ErrorMessage = styled.p`
   color: var(--color-error);
   font-size: 20px;
@@ -141,66 +150,86 @@ const ErrorMessage = styled.p`
 `;
 
 const MovieDetail = () => {
+  const { id } = useParams(); 
   const [movie, setMovie] = useState(null);
   const [loading, setLoading] = useState(true);
-  const { id } = useParams();
-  const navigate = useNavigate();
+  const [hasError, setHasError] = useState(false);
 
   const apiKey = import.meta.env.VITE_TMDB_API_KEY;
 
   useEffect(() => {
-    fetch(
-      `https://api.themoviedb.org/3/movie/${id}?api_key=${apiKey}&language=en-US`
-    )
+    setLoading(true);
+    setHasError(false);
+
+    fetch(`https://api.themoviedb.org/3/movie/${id}?api_key=${apiKey}&language=en-US`)
       .then((response) => response.json())
       .then((data) => {
-        setMovie(data);
+        
+        if (!data || data.success === false) {
+          setHasError(true);
+          setMovie(null);
+        } else {
+          setMovie(data);
+        }
         setLoading(false);
       })
-      .catch((error) => {
-        console.error("Error fetching movie details:", error);
+      .catch(() => {
+        setHasError(true);
         setLoading(false);
       });
   }, [id, apiKey]);
 
+  // Loading state
   if (loading) {
-    return <ErrorMessage>Loading movie details...</ErrorMessage>;
+    return <Message>Loading movie details...</Message>;
   }
 
-  if (!movie || movie.success === false || !movie.id) {
-    navigate("/404");
-    return null;
+  // Error / Not found state 
+  if (hasError || !movie) {
+    return (
+      <main aria-label="Movie Details">
+        <ErrorMessage>Sorry, we couldn’t find that movie.</ErrorMessage>
+        <Message>
+          <Link to="/">⬅ Go back to Movies</Link>
+        </Message>
+      </main>
+    );
   }
+
+  // Building image URLs
+  const backdropUrl = movie.backdrop_path
+    ? `https://image.tmdb.org/t/p/original${movie.backdrop_path}`
+    : "";
+
+  const posterUrl = movie.poster_path
+    ? `https://image.tmdb.org/t/p/w500${movie.poster_path}`
+    : "";
 
   return (
-    <>
-      <main aria-label="Movie Details">
-        <Background
-          $backgroundUrl={`https://image.tmdb.org/t/p/original${movie.backdrop_path}`}
-        >
-          <Container>
-            <BackLink aria-label="Link back to homepage" to="/">
-              ⬅ Back to Movies
-            </BackLink>
-            {movie.poster_path && (
-              <Poster
-                src={`https://image.tmdb.org/t/p/w500${movie.poster_path}`}
-                alt={`Movie poster for ${movie.title}`}
-              />
-            )}
-            <InfoWrapper>
-              <HeadText>
-                <h1>{movie.title}</h1>
-                <Rating>
-                  ⭐<span>{Math.round(movie.vote_average)}</span>
-                </Rating>
-              </HeadText>
-              <Description>{movie.overview}</Description>
-            </InfoWrapper>
-          </Container>
-        </Background>
-      </main>
-    </>
+    <main aria-label="Movie Details">
+      <Background $backgroundUrl={backdropUrl}>
+        <Container>
+          <BackLink aria-label="Link back to homepage" to="/">
+            ⬅ Back to Movies
+          </BackLink>
+
+          {posterUrl && (
+            <Poster src={posterUrl} alt={`Movie poster for ${movie.title}`} />
+          )}
+
+          <InfoWrapper>
+            <HeadText>
+              <h1>{movie.title}</h1>
+              <Rating>
+                ⭐<span>{Math.round(movie.vote_average)}</span>
+              </Rating>
+            </HeadText>
+
+            <Description>{movie.overview}</Description>
+          </InfoWrapper>
+        </Container>
+      </Background>
+    </main>
   );
 };
 
