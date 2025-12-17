@@ -214,7 +214,7 @@ const MovieDetail = () => {
       <Background $backgroundUrl={backdropUrl}>
         <Container>
           <BackLink aria-label="Link back to homepage" to="/">
-            ⬅ Back to Movies
+            Back to Movies
           </BackLink>
 
           {posterUrl && (
