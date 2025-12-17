@@ -140,4 +140,68 @@ const ErrorMessage = styled.p`
   padding: 20px;
 `;
 
-c
+const MovieDetail = () => {
+  const [movie, setMovie] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const { id } = useParams();
+  const navigate = useNavigate();
+
+  const apiKey = import.meta.env.VITE_TMDB_API_KEY;
+
+  useEffect(() => {
+    fetch(
+      `https://api.themoviedb.org/3/movie/${id}?api_key=${apiKey}&language=en-US`
+    )
+      .then((response) => response.json())
+      .then((data) => {
+        setMovie(data);
+        setLoading(false);
+      })
+      .catch((error) => {
+        console.error("Error fetching movie details:", error);
+        setLoading(false);
+      });
+  }, [id, apiKey]);
+
+  if (loading) {
+    return <ErrorMessage>Loading movie details...</ErrorMessage>;
+  }
+
+  if (!movie || movie.success === false || !movie.id) {
+    navigate("/404");
+    return null;
+  }
+
+  return (
+    <>
+      <main aria-label="Movie Details">
+        <Background
+          $backgroundUrl={`https://image.tmdb.org/t/p/original${movie.backdrop_path}`}
+        >
+          <Container>
+            <BackLink aria-label="Link back to homepage" to="/">
+              ⬅ Back to Movies
+            </BackLink>
+            {movie.poster_path && (
+              <Poster
+                src={`https://image.tmdb.org/t/p/w500${movie.poster_path}`}
+                alt={`Movie poster for ${movie.title}`}
+              />
+            )}
+            <InfoWrapper>
+              <HeadText>
+                <h1>{movie.title}</h1>
+                <Rating>
+                  ⭐<span>{Math.round(movie.vote_average)}</span>
+                </Rating>
+              </HeadText>
+              <Description>{movie.overview}</Description>
+            </InfoWrapper>
+          </Container>
+        </Background>
+      </main>
+    </>
+  );
+};
+
+export default MovieDetail;
