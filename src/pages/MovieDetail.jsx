@@ -151,11 +151,15 @@ const ErrorMessage = styled.p`
 
 const MovieDetail = () => {
   const { id } = useParams(); 
+  console.log("MOVIE ID FROM URL:", id);
+  
   const [movie, setMovie] = useState(null);
   const [loading, setLoading] = useState(true);
   const [hasError, setHasError] = useState(false);
 
   const apiKey = import.meta.env.VITE_TMDB_API_KEY;
+
+  console.log("API KEY:", apiKey);
 
   useEffect(() => {
     setLoading(true);
